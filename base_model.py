@@ -6,7 +6,7 @@ class BaseModel(object):
         if self.model is None:
             raise Exception("Model is not build yet")
 
-    def build_model(self, input_shape, num_classes):
+    def build_model(self, input_shape, num_classes, metric_list):
         raise NotImplemented
 
     def fit(self, x_train, y_train, batch_size, epochs):

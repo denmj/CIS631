@@ -7,38 +7,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from tensorflow.keras.layers import Dense, Conv2D, Dropout,BatchNormalization, Flatten, MaxPooling2D
-from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications import InceptionV3
 
 
-class ResNet_Builder(BaseModel):
+class Inception_Builder(BaseModel):
 
     def __init__(self, input_shape, num_classes, metric_list):
-        super(ResNet_Builder, self).__init__()
+        super(Inception_Builder, self).__init__()
         self.build_model(input_shape, num_classes, metric_list)
         self.hist = []
 
     def build_model(self, input_shape, num_classes, metric_list):
 
-        self.resnet_model = ResNet50(include_top=False, weights="imagenet", input_shape=input_shape)
-        self.model = keras.models.Sequential(self.resnet_model)
+        self.inception = InceptionV3(include_top=False, weights="imagenet", input_shape=input_shape)
+        self.model = keras.models.Sequential(self.inception)
 
-        self.model.add(Conv2D(64, (3, 3), activation='relu'))
-        self.model.add(Dropout(0.40))
-        self.model.add(Conv2D(64, (3, 3), activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2)))
-        self.model.add(Dropout(0.5))
+        # self.model.add(Conv2D(64, (3, 3), activation='relu'))
+        # self.model.add(Dropout(0.40))
+        # self.model.add(Conv2D(64, (3, 3), activation='relu'))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2)))
+        # self.model.add(Dropout(0.40))
         self.model.add(Flatten())
         self.model.add(Dense(512, activation='relu'))
-        self.model.add(Dropout(0.5))
-        # self.model.add(Flatten())
-        # self.model.add(Dense(512, activation='relu'))
-        # self.model.add(Dropout(0.5))
-        # self.model.add(BatchNormalization())
-        # self.model.add(Dense(256, activation='relu'))
-        # self.model.add(Dropout(0.5))
-        # self.model.add(BatchNormalization())
+        self.model.add(Dropout(0.4))
         self.model.add(Dense(2, activation='softmax'))
-
         self.model.compile(loss=keras.losses.categorical_crossentropy,
                            optimizer=keras.optimizers.Adam(lr=0.0001),
                            metrics=metric_list)

@@ -10,12 +10,12 @@ import os
 
 class CNN_Builder(BaseModel):
 
-    def __init__(self, input_shape, num_classes):
+    def __init__(self, input_shape, num_classes, metric_list):
         super(CNN_Builder, self).__init__()
-        self.build_model(input_shape, num_classes)
+        self.build_model(input_shape, num_classes, metric_list)
         self.hist = []
 
-    def build_model(self, input_shape, num_classes):
+    def build_model(self, input_shape, num_classes, metric_list):
         self.model = keras.models.Sequential(
             [
                 keras.Input(shape=input_shape),
@@ -31,13 +31,22 @@ class CNN_Builder(BaseModel):
 
         self.model.compile(loss=keras.losses.categorical_crossentropy,
                            optimizer=keras.optimizers.Adam(),
-                           metrics=['accuracy'])
+                           metrics=metric_list)
 
     def fit(self, x_train, y_train, batch_size, epochs, plot=False):
         self.hist = self.model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
 
-        if plot:
+        print(self.hist.history['accuracy'])
+        print(self.hist.history['precision_m'])
+        print(self.hist.history['recall_m'])
+        print(self.hist.history['f1_m'])
 
+        print(self.hist.history['val_accuracy'])
+        print(self.hist.history['val_precision_m'])
+        print(self.hist.history['val_recall_m'])
+        print(self.hist.history['val_f1_m'])
+        if plot:
+            # Accuracy plot
             plt.plot(self.hist.history['accuracy'])
             plt.plot(self.hist.history['val_accuracy'])
             plt.title('model accuracy')
@@ -45,11 +54,35 @@ class CNN_Builder(BaseModel):
             plt.xlabel('epoch')
             plt.legend(['train', 'test'], loc='upper left')
             plt.show()
-            # summarize history for loss
+            # Loss plot
             plt.plot(self.hist.history['loss'])
             plt.plot(self.hist.history['val_loss'])
             plt.title('model loss')
             plt.ylabel('loss')
+            plt.xlabel('epoch')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.show()
+            # Precision plot
+            plt.plot(self.hist.history['precision_m'])
+            plt.plot(self.hist.history['val_precision_m'])
+            plt.title('model precision')
+            plt.ylabel('precision')
+            plt.xlabel('epoch')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.show()
+            # Recall plot
+            plt.plot(self.hist.history['recall_m'])
+            plt.plot(self.hist.history['val_recall_m'])
+            plt.title('model recall')
+            plt.ylabel('recall')
+            plt.xlabel('epoch')
+            plt.legend(['train', 'test'], loc='upper left')
+            plt.show()
+            # F1 plot
+            plt.plot(self.hist.history['f1_m'])
+            plt.plot(self.hist.history['val_f1_m'])
+            plt.title('model F1 score')
+            plt.ylabel('F1 score')
             plt.xlabel('epoch')
             plt.legend(['train', 'test'], loc='upper left')
             plt.show()
